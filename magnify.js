@@ -1,4 +1,4 @@
-﻿(function ($, window, document) {
+(function ($, window, document) {
 
     var Magnifier = {
         magnifier: 0,
@@ -9,12 +9,13 @@
         nativeH: 0,
         CoverOffsetX: 0,
         CoverOffsetY: 0,
+        backgroundSize: "cover",    // COVER o CONTAIN
 
         enabled: true,
 
         /* standard selection */
         selectors: {
-            glass_class: 'glass' // lame
+            glass_class: 'glass'
             , glass: '.glass'
             , thumb: '.thumb'
             , active_class: 'active'
@@ -27,7 +28,7 @@
             Magnifier.magnifier = $(el);
             var $thumb = Magnifier.magnifier.find(Magnifier.selectors.thumb);
             
-            Magnifier.initParam();
+            Magnifier.reInit();
 
             $thumb.before(Magnifier.glass.css({
                 'background-image': 'url(' + $thumb.attr('src') + ')'
@@ -39,10 +40,10 @@
             $(window).on('resize', Magnifier.behaviors.resize);
 
             $(document).keydown(function(e) {
-                if (e.keyCode == 27) {
+                if (e.keyCode == 27) {    // escape key (keycode '27')
                     Magnifier.enabled = false;
                     Magnifier.behaviors.fadeOut();
-                }   // escape key (keycode '27')
+                }
             });
 
             $thumb.on('mouseleave', function () {
@@ -51,8 +52,10 @@
 
             return Magnifier;
         },
-        initParam: function () {
+        reInit: function () {
             var $thumb = Magnifier.magnifier.find(Magnifier.selectors.thumb);
+            // +++
+            Magnifier.backgroundSize = $thumb.css('background-size');
 
             var image_object = new Image();
             image_object.src = $thumb.attr("src");
@@ -67,7 +70,7 @@
 
                 var thumbWidth = $thumb.width();
                 var thumbHeight = $thumb.height();
-                var coverFactor = Math.max(thumbWidth / nativeWidth, thumbHeight / nativeHeight);
+                var coverFactor = Magnifier.backgroundSize=="cover" ? Math.max(thumbWidth / nativeWidth, thumbHeight / nativeHeight) : Math.min(thumbWidth / nativeWidth, thumbHeight / nativeHeight);
                 Magnifier.coverFactor = coverFactor;
 
                 var finalWidth = nativeWidth * coverFactor * Magnifier.zoom;
@@ -82,12 +85,15 @@
             Magnifier.glass.css('background-image', 'url(' + $thumb.attr('src') + ')');
             return Magnifier;
         },
+        setZoom: function(z) {
+            Magnifier.zoom = z;
+            Magnifier.reInit();
+        },
         behaviors: {
             fadeDelay: 300,
             /* fade in/out glass overlay if mouse is outside container */
             isHover: function (cw, ch, mx, my) {
-                return ((mx < cw && my < ch && mx > 0 && my > 0) && $(window).width() > 991 && !(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)))
-                ;
+                return ((mx < cw && my < ch && mx > 0 && my > 0) && !(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)));
             },
             fadeOut: function () {
                 Magnifier.glass.fadeOut(Magnifier.behaviors.fadeDelay);
@@ -133,7 +139,7 @@
                 }
             },//--        fn mousemove
             resize: function () {
-                Magnifier.initParam();
+                Magnifier.reInit();
             }
         }
     };////----        Magnifier
@@ -141,10 +147,10 @@
 
     $.fn.magnifier = function () {
         return this.each(function () {
-            if ($(this).data("magn-init") === true) {
+            if ($(this).data("magnify-init") === true) {
                 return false;
             }
-            $(this).data("magn-init", true);
+            $(this).data("magnify-init", true);
             var magnifier = Object.create(Magnifier);
             var M = magnifier.init(this);
             $(this).data("magnifier", M);
