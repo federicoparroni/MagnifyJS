@@ -9,22 +9,25 @@ Features:
 - Press ESC to disable
 
 
+### HOW TO USE:
+
+```html
+<script type="text/javascript" src="magnify.js"></script>
+<link href="magnify.css" rel="stylesheet" type="text/css">
+
+<div class="magnify" src="image.jpg" style="background: url(image.jpg) center center /cover">
+
+<script>
+$('.magnify').magnifier(); // init
+var magnify = $('.magnify').magnifier().data('magnifier'); // init and get data
+</script>
+```
 
 
-HOW TO USE:
+### API:
 
-HTML:
-	1) Import reference to .js and .ccs files
-	2) Insert in body DIV:   <div class="magnify" src="image.jpg" style="background: url(image.jpg) center center /cover">
-JS:
-	1) Initialize:				                 $('.magnify').magnifier();
-	2) Initialize and get magnify data:	   var magnify = $('.magnify').magnifier().data('magnifier');
-
-
-
-API:
-
-Methods:
-	1) Set zoom level: 	 magnify.setZoom(2);	// zoom level 200%, default 1.5
-	2) Disable/Enable: 	 magnify.enabled = false/true;
-	3) Reinit: 		       magnify.reInit();
+```js
+magnify.setZoom(2);	// zoom level to 200% (default 1.5)
+magnify.enabled = false; // disable/enable
+magnify.reInit(); // reinit
+```
